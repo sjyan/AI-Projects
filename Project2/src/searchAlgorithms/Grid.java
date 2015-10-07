@@ -70,6 +70,10 @@ public class Grid {
 		return columnToFriendMap;
 	}
 	
+	public void updateColumnToFriendMap(int column, int row) {
+		columnToFriendMap.put(column, row);
+	}
+	
 	public int getCurrentHeuristic() {
 		return currentHeuristic;
 	}

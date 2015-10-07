@@ -38,17 +38,15 @@ public class LocalSearch {
 		int minimaCounter = 0;
 		while (true) {
 			int pivotColumn = currentColumn % grid.getNumFriends();
-			minimaCounter = findNextBestLocationForFriend(pivotColumn) == 0 ? 0 : minimaCounter + 1;
-			System.out.println("heuristic after babbbysss "+ calculateHeuristic(grid));
+			minimaCounter = findNextBestLocationForFriend(pivotColumn) == 0 ? 0 : (minimaCounter + 1);
 
 			// break when no friends have moved in any column
 			if (minimaCounter == grid.getNumFriends()) {
 				break;
 			}
 			currentColumn++;
-
 		}
-		System.out.println(calculateHeuristic(grid));
+		System.out.println("The ending heuristic is " + calculateHeuristic(grid));
 	}
 	
 	// returns 1 if friend changed to a better location, 0 otherwise
@@ -58,7 +56,6 @@ public class LocalSearch {
 		
 		int nextBestIndex = currentIndex;
 		int bestHeuristic = calculateHeuristic(grid);
-		System.out.println("heuristic before "+ bestHeuristic);
 		
 		for (int i = 0; i < grid.getNumFriends(); i++) {
 			if (i != currentIndex) {
@@ -75,9 +72,8 @@ public class LocalSearch {
 				}
 			}
 		}
-		System.out.println("heuristic after "+ bestHeuristic);
 		gridArray[nextBestIndex][column].setState(DomainState.FRIEND);
-		System.out.println("heuristic after babys"+ bestHeuristic);
+		grid.updateColumnToFriendMap(column, nextBestIndex);
 		return nextBestIndex != currentIndex ? 0 : 1;
 	}
 	
