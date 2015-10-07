@@ -1,12 +1,18 @@
 package searchAlgorithms;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import searchAlgorithms.GridLocation.DomainState;
 
 public class Grid {
 
+	private static final int optimalSolution = 0;
+	
 	private GridLocation[][] gridArray;
 	private int numFriends;
 	private int numTrees;
+	private Map<Integer, Integer> columnToFriendMap;
 	private int currentHeuristic;
 	
 	public Grid(int numFriends, int numTrees, int[][] treeLocations) {
@@ -16,8 +22,13 @@ public class Grid {
 		initializeGrid(numFriends);
 		addTreesToGrid(treeLocations);
 		addFriendsToGridRandom();
+		updateCurrentHeuristic();
 	}
 
+	private void updateCurrentHeuristic() {
+		
+	}
+	
 	private void addTreesToGrid(int[][] treeLocations) {
 		for (int i = 0; i < this.numTrees; i++) {
 			gridArray[treeLocations[i][0]][treeLocations[i][1]].setState(DomainState.TREE);
@@ -33,12 +44,14 @@ public class Grid {
 	}
 	
 	private void addFriendsToGridRandom() {
+		columnToFriendMap = new HashMap<>();
 		for (int i = 0; i < numFriends; i++) {
 			int randomLocation = (int) (Math.random() * numFriends);
 			while (gridArray[randomLocation][i].getState() != DomainState.EMPTY) {
 				randomLocation = (int) (Math.random() * numFriends);
 			}
 			gridArray[randomLocation][i].setState(DomainState.FRIEND);
+			columnToFriendMap.put(i, randomLocation);
 		}
 	}
 	public GridLocation[][] getGrid() {
@@ -53,8 +66,11 @@ public class Grid {
 		return numFriends;
 	}
 	
+	public Map<Integer, Integer> getColumnToFriendMap() {
+		return columnToFriendMap;
+	}
+	
 	public int getCurrentHeuristic() {
 		return currentHeuristic;
 	}
-	
 }

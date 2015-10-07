@@ -34,11 +34,174 @@ public class LocalSearch {
 	 */
 	
 	public void steepestAscentHillClimbingSearch() {
-		
-		
-		
+		int currentColumn = 0;
+		int minimaCounter = 0;
+		while (true) {
+			int pivotColumn = currentColumn % grid.getNumFriends();
+			minimaCounter = findNextBestLocationForFriend(pivotColumn) == 0 ? 0 : minimaCounter + 1;
+			System.out.println("heuristic after babbbysss "+ calculateHeuristic(grid));
+
+			// break when no friends have moved in any column
+			if (minimaCounter == grid.getNumFriends()) {
+				break;
+			}
+			currentColumn++;
+
+		}
+		System.out.println(calculateHeuristic(grid));
 	}
 	
+	// returns 1 if friend changed to a better location, 0 otherwise
+	private int findNextBestLocationForFriend(int column) {
+		GridLocation[][] gridArray = grid.getGrid();
+		int currentIndex = grid.getColumnToFriendMap().get(column);
+		
+		int nextBestIndex = currentIndex;
+		int bestHeuristic = calculateHeuristic(grid);
+		System.out.println("heuristic before "+ bestHeuristic);
+		
+		for (int i = 0; i < grid.getNumFriends(); i++) {
+			if (i != currentIndex) {
+				if (gridArray[i][column].getState() == DomainState.EMPTY) {
+					gridArray[nextBestIndex][column].setState(DomainState.EMPTY);
+					gridArray[i][column].setState(DomainState.FRIEND);
+					int heuristic = calculateHeuristic(grid);
+					if (heuristic < bestHeuristic) {
+						nextBestIndex = i;
+						bestHeuristic = heuristic;
+					} else {
+						gridArray[i][column].setState(DomainState.EMPTY);
+					}
+				}
+			}
+		}
+		System.out.println("heuristic after "+ bestHeuristic);
+		gridArray[nextBestIndex][column].setState(DomainState.FRIEND);
+		System.out.println("heuristic after babys"+ bestHeuristic);
+		return nextBestIndex != currentIndex ? 0 : 1;
+	}
+	
+	private int calculateHeuristic(Grid grid) {
+		int heuristic = 0;
+		for (int columnIndex = 0; columnIndex < grid.getNumFriends(); columnIndex++) {
+			int friendIndex = grid.getColumnToFriendMap().get(columnIndex);
+			heuristic += findConflicts(friendIndex, columnIndex, grid);
+		}
+		return heuristic;
+	}
+	
+	private int findConflicts(int x, int y, Grid grid) {
+		int conflicts = 0;
+		conflicts += findConflictUpRight(x, y, grid);
+		conflicts += findConflictUpLeft(x, y, grid);
+		conflicts += findConflictDownLeft(x, y, grid);
+		conflicts += findConflictDownRight(x, y, grid);
+		conflicts += findConflictsRight(x, y, grid);
+		conflicts += findConflictsLeft(x, y, grid);
+		return conflicts;
+	}
+	
+	private int findConflictsRight(int x, int y, Grid grid) {
+		y++;
+		boolean conflict = false;
+		while (y < grid.getNumFriends()) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			y++;
+		}
+		return conflict ? 1 : 0;
+	}
+	
+	private int findConflictsLeft(int x, int y, Grid grid) {
+		y--;
+		boolean conflict = false;
+		while (y >= 0) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			y--;
+		}
+		return conflict ? 1 : 0;
+	}
+	
+	private int findConflictUpRight(int x, int y, Grid grid) {
+		x--; y++;
+		boolean conflict = false;
+		while (x >= 0 && y < grid.getNumFriends()) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			x--; y++;
+		}
+		return conflict ? 1 : 0;
+	}
+	
+	private int findConflictUpLeft(int x, int y, Grid grid) {
+		x--; y--;
+		boolean conflict = false;
+		while (x >= 0 && y >= 0) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			x--; y--;
+		}
+		return conflict ? 1 : 0;
+	}
+
+	private int findConflictDownLeft(int x, int y, Grid grid) {
+		x++; y--;
+		boolean conflict = false;
+		while (x < grid.getNumFriends() && y >= 0) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			x++; y--;
+		}
+		return conflict ? 1 : 0;
+	}
+
+	private int findConflictDownRight(int x, int y, Grid grid) {
+		x++; y++;
+		boolean conflict = false;
+		while (x < grid.getNumFriends() && y < grid.getNumFriends()) {
+			DomainState state = grid.getGrid()[x][y].getState();
+			if (state == DomainState.TREE) {
+				break; 
+			}
+			if (state == DomainState.FRIEND) {
+				conflict = true;
+				break;
+			}
+			x++; y++;
+		}
+		return conflict ? 1 : 0;
+	}
 
 	
 	private void readFromFileToGrid(String fileName) throws IOException {
