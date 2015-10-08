@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import searchAlgorithms.GridLocation.DomainState;
 
@@ -162,7 +164,8 @@ public class LocalSearch {
 				break;
 			}
 			// break when no friends have moved in any column
-			if (minimaCounter == grid.getNumFriends()) {
+			// increasing this value increases the score 
+			if (minimaCounter == 70) {
 				break;
 			}
 		}
@@ -171,11 +174,60 @@ public class LocalSearch {
 		return calculateHeuristic(grid);
 	}
 	
+	// stochastic without sliding
 	public int stochasticHillClimbing() {
-		
-		
+		int currentColumn = 0;
+		int minimaCounter = 0;
+		while (true) {
+			int pivotColumn = currentColumn % grid.getNumFriends();
+			minimaCounter = findNextBestLocationForFriendStochatic(pivotColumn) == 0 ? 0 : (minimaCounter + 1);
+			if (calculateHeuristic(grid) == OPTIMAL_SOLUTION) {
+				break;
+			}
+			// break when no friends have moved in any column
+			// counter should not affect 
+			if (minimaCounter == grid.getNumFriends()) {
+				break;
+			}
+			currentColumn++;
+		}
+//		System.out.println("The ending heuristic is " + calculateHeuristic(grid));
+		//printGrid();
 		return calculateHeuristic(grid);
 	}
+	
+	private int findNextBestLocationForFriendStochatic(int column) {
+		GridLocation[][] gridArray = grid.getGrid();
+		int currentIndex = grid.getColumnToFriendMap().get(column);
+		
+		int currentBestHeuristic = calculateHeuristic(grid);
+		List<Integer> possibleImprovements = new ArrayList<>();
+		for (int i = 0; i < grid.getNumFriends(); i++) {
+			if (i != currentIndex) {
+				if (gridArray[i][column].getState() == DomainState.EMPTY) {
+					gridArray[currentIndex][column].setState(DomainState.EMPTY);
+					gridArray[i][column].setState(DomainState.FRIEND);
+					int heuristic = calculateHeuristic(grid);
+					if (heuristic < currentBestHeuristic) {
+						possibleImprovements.add(i);
+					}
+					gridArray[currentIndex][column].setState(DomainState.FRIEND);
+					gridArray[i][column].setState(DomainState.EMPTY);
+				}
+			}
+		}
+		
+		if (possibleImprovements.size() > 0) {
+			int randomIndex = (int) (Math.random() * possibleImprovements.size());
+			gridArray[possibleImprovements.get(randomIndex)][column].setState(DomainState.FRIEND);
+			gridArray[currentIndex][column].setState(DomainState.EMPTY);
+			grid.updateColumnToFriendMap(column, possibleImprovements.get(randomIndex));
+			return 0;
+		}
+		return 1;
+	}
+	
+	
 	private int calculateHeuristic(Grid grid) {
 		int heuristic = 0;
 		for (int columnIndex = 0; columnIndex < grid.getNumFriends(); columnIndex++) {

@@ -20,11 +20,6 @@ public class Grid {
 		initializeGrid(numFriends);
 		addTreesToGrid(treeLocations);
 		addFriendsToGridRandom();
-		updateCurrentHeuristic();
-	}
-
-	private void updateCurrentHeuristic() {
-		
 	}
 	
 	private void addTreesToGrid(int[][] treeLocations) {

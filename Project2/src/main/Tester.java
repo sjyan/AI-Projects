@@ -33,6 +33,14 @@ public class Tester {
 
 		}
 		System.out.println("Out of 100 runs, steepestAscentHillClimbingSearchV3 found the optimal solution " + foundOptimalCount + " times.");
+
+		foundOptimalCount = 0;
+		for (int i = 0; i < 100; i++) {
+			LocalSearch localSearch = new LocalSearch();
+			foundOptimalCount = localSearch.stochasticHillClimbing() != 0 ? foundOptimalCount : foundOptimalCount + 1;
+
+		}
+		System.out.println("Out of 100 runs, stochasticHillClimbing found the optimal solution " + foundOptimalCount + " times.");
 	}
 
 }
