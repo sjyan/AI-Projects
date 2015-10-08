@@ -13,11 +13,41 @@ public class LocalSearch {
 
 	private static final int MAX_SIDEWAYS = 10;
 	private static final int OPTIMAL_SOLUTION = 0;
+	
+	public enum Local_Search_Versions {
+		SAHC,	// Steepest Ascent Hill Climbing V1
+		SAHCV2, // Steepest Ascent Hill Climbing V2
+		SAHCV3, // Steepest Ascent Hill Climbing V3
+		SHC		// Stochastic Hill Climbing
+	}
 
 	Grid grid;
+	private int totalSteps;
 	
-	public LocalSearch() throws IOException {
-		readFromFileToGrid("../forests/input.txt");
+	public LocalSearch(String forestFilePath) throws IOException, IllegalAccessException {
+		readFromFileToGrid(forestFilePath);
+		totalSteps = 0;
+	}
+	
+	public int localSearch(Local_Search_Versions version) throws IllegalAccessException {
+		int result = -1;
+		switch (version) {
+			case SAHC:
+				result =  steepestAscentHillClimbingSearch();
+				break;
+			case SAHCV2:
+				result = steepestAscentHillClimbingSearchV2();
+				break;
+			case SAHCV3:
+				result = steepestAscentHillClimbingSearchV3();
+				break;
+			case SHC:
+				result = stochasticHillClimbing();
+				break;
+			default:
+				throw new IllegalAccessException("Not a valid search algorithm");
+		}
+		return result;
 	}
 	
 	/*
@@ -49,6 +79,7 @@ public class LocalSearch {
 				break;
 			}
 			currentColumn++;
+			totalSteps++;
 		}
 		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
 		//printGrid();
@@ -113,7 +144,7 @@ public class LocalSearch {
 			if (sidewaysMoves == MAX_SIDEWAYS) {
 				break;
 			}
-			
+			totalSteps++;
 			currentColumn++;
 		}
 		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
@@ -165,9 +196,10 @@ public class LocalSearch {
 			}
 			// break when no friends have moved in any column
 			// increasing this value increases the score 
-			if (minimaCounter == 70) {
+			if (minimaCounter == 9) {
 				break;
 			}
+			totalSteps++;
 		}
 		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
 		//printGrid();
@@ -189,6 +221,7 @@ public class LocalSearch {
 			if (minimaCounter == grid.getNumFriends()) {
 				break;
 			}
+			totalSteps++;
 			currentColumn++;
 		}
 //		System.out.println("The ending heuristic is " + calculateHeuristic(grid));
@@ -370,7 +403,6 @@ public class LocalSearch {
 			treeLocations[i][1] = Integer.parseInt(splitArray[1]) - 1;
 		}
 		this.grid = new Grid(numFriends, numTrees, treeLocations);
-
 	}
 	
 	public void printGrid() {
@@ -388,5 +420,31 @@ public class LocalSearch {
 				}
 			}
 		}
+		System.out.println();
+	}
+	
+	public static void printGrid(GridLocation[][] grid) {
+		int length = grid.length;
+		for (int i = 0; i < length; i++) {
+			System.out.println();
+			for (int j = 0; j < length; j++) {
+				if (grid[i][j].getState() == DomainState.FRIEND) {
+					System.out.print("F");
+				} else if (grid[i][j].getState() == DomainState.TREE) {
+					System.out.print("T");
+				} else {
+					System.out.print(" ");
+				}
+			}
+		}
+		System.out.println();
+	}
+	
+	public int getTotalSteps() {
+		return totalSteps;
+	}
+	
+	public Grid getGrid() {
+		return grid;
 	}
 }
