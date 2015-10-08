@@ -6,8 +6,6 @@ import java.util.Map;
 import searchAlgorithms.GridLocation.DomainState;
 
 public class Grid {
-
-	private static final int optimalSolution = 0;
 	
 	private GridLocation[][] gridArray;
 	private int numFriends;

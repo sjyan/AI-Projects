@@ -9,13 +9,13 @@ import searchAlgorithms.GridLocation.DomainState;
 
 public class LocalSearch {
 
-	int numFriends, numTrees;
+	private static final int MAX_SIDEWAYS = 10;
+	private static final int OPTIMAL_SOLUTION = 0;
+
 	Grid grid;
 	
 	public LocalSearch() throws IOException {
 		readFromFileToGrid("../forests/input.txt");
-		steepestAscentHillClimbingSearch();
-		printGrid();
 	}
 	
 	/*
@@ -33,20 +33,24 @@ public class LocalSearch {
 	 * 4. random restart hill climbing - keep restarting algorithm with a random initial state until goal is found
 	 */
 	
-	public void steepestAscentHillClimbingSearch() {
+	public int steepestAscentHillClimbingSearch() {
 		int currentColumn = 0;
 		int minimaCounter = 0;
 		while (true) {
 			int pivotColumn = currentColumn % grid.getNumFriends();
 			minimaCounter = findNextBestLocationForFriend(pivotColumn) == 0 ? 0 : (minimaCounter + 1);
-
+			if (calculateHeuristic(grid) == OPTIMAL_SOLUTION) {
+				break;
+			}
 			// break when no friends have moved in any column
 			if (minimaCounter == grid.getNumFriends()) {
 				break;
 			}
 			currentColumn++;
 		}
-		System.out.println("The ending heuristic is " + calculateHeuristic(grid));
+		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
+		//printGrid();
+		return calculateHeuristic(grid);
 	}
 	
 	// returns 1 if friend changed to a better location, 0 otherwise
@@ -77,6 +81,101 @@ public class LocalSearch {
 		return nextBestIndex != currentIndex ? 0 : 1;
 	}
 	
+	// allows sideways
+	public int steepestAscentHillClimbingSearchV2() {
+		int currentColumn = 0;
+		int minimaCounter = 0;
+		int sidewaysMoves = 0;
+		while (true) {
+			int pivotColumn = currentColumn % grid.getNumFriends();
+			
+			int result = findNextBestLocationForFriendV2(pivotColumn);
+			if (calculateHeuristic(grid) == OPTIMAL_SOLUTION) {
+				break;
+			}
+			
+			if (result == 2) {
+				sidewaysMoves++;
+				minimaCounter = 0;
+			} else if (result == 1) {
+				minimaCounter++;
+			} else {
+				minimaCounter = 0;
+				sidewaysMoves = 0;
+			}
+
+			// break when no friends have moved in any column
+			if (minimaCounter == grid.getNumFriends()) {
+				break;
+			}
+			if (sidewaysMoves == MAX_SIDEWAYS) {
+				break;
+			}
+			
+			currentColumn++;
+		}
+		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
+		//printGrid();
+		return calculateHeuristic(grid);
+	}
+	
+	private int findNextBestLocationForFriendV2(int column) {
+		GridLocation[][] gridArray = grid.getGrid();
+		int currentIndex = grid.getColumnToFriendMap().get(column);
+		
+		int nextBestIndex = currentIndex;
+		int bestHeuristic = calculateHeuristic(grid);
+		int initialHeuristic = bestHeuristic;
+		
+		for (int i = 0; i < grid.getNumFriends(); i++) {
+			if (i != currentIndex) {
+				if (gridArray[i][column].getState() == DomainState.EMPTY) {
+					gridArray[nextBestIndex][column].setState(DomainState.EMPTY);
+					gridArray[i][column].setState(DomainState.FRIEND);
+					int heuristic = calculateHeuristic(grid);
+					// allow for sideways movement
+					if (heuristic <= bestHeuristic) {
+						nextBestIndex = i;
+						bestHeuristic = heuristic;
+					} else {
+						gridArray[i][column].setState(DomainState.EMPTY);
+					}
+				}
+			}
+		}
+		gridArray[nextBestIndex][column].setState(DomainState.FRIEND);
+		grid.updateColumnToFriendMap(column, nextBestIndex);
+		if (nextBestIndex != currentIndex) {
+			// if same heuristic but friend moved, return 2, otherwise return 1
+			return initialHeuristic != bestHeuristic ? 0 : 2;
+		}
+		// friend didn't move
+		return 1; 
+	}
+
+	public int steepestAscentHillClimbingSearchV3() {
+		int minimaCounter = 0;
+		while (true) {
+			int randomPivotColumn = (int) (Math.random() * grid.getNumFriends());
+			minimaCounter = findNextBestLocationForFriend(randomPivotColumn) == 0 ? 0 : (minimaCounter + 1);
+			if (calculateHeuristic(grid) == OPTIMAL_SOLUTION) {
+				break;
+			}
+			// break when no friends have moved in any column
+			if (minimaCounter == grid.getNumFriends()) {
+				break;
+			}
+		}
+		//System.out.println("The ending heuristic is " + calculateHeuristic(grid));
+		//printGrid();
+		return calculateHeuristic(grid);
+	}
+	
+	public int stochasticHillClimbing() {
+		
+		
+		return calculateHeuristic(grid);
+	}
 	private int calculateHeuristic(Grid grid) {
 		int heuristic = 0;
 		for (int columnIndex = 0; columnIndex < grid.getNumFriends(); columnIndex++) {
