@@ -10,11 +10,15 @@ import searchAlgorithms.CandyLocation.Color;
 public abstract class Search {
 	
 	protected CandyLocation[][] grid = new CandyLocation[6][6];
-	protected int[][] values = new int[6][6];
+	protected int[][] values;
 	
-	public Search(CandyLocation[][] board, int[][] values) throws IOException {
-		
+	public Search(int[][] values) throws IOException {
+		this.values = values;
 	}
 	
 	public abstract Coordinate search(Color color);
+	
+	public abstract void setBoard(CandyLocation[][] grid);
+	
+	public abstract void setValues(int[][] values);
 }

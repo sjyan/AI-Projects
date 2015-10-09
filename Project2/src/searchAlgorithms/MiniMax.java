@@ -9,11 +9,8 @@ import searchAlgorithms.CandyLocation.Color;
 
 public class MiniMax extends Search{
 
-	CandyLocation[][] grid = new CandyLocation[6][6];
-	int[][] values = new int[6][6];
-
-	public MiniMax(CandyLocation[][] board, int[][] values) throws IOException {
-		super(board, values);
+	public MiniMax(int[][] values) throws IOException {
+		super(values);
 	}
 
 	@Override
@@ -34,4 +31,29 @@ public class MiniMax extends Search{
 		
 	}
 
+	private int checkUtil() {
+		int utility = 0;
+		
+		for (int i=0; i<6; i++) {
+			for (int j=0; j<6; j++) {
+				if (grid[i][j].getColor() == Color.BLUE) {
+					utility += values[i][j];
+				} else if(grid[i][j].getColor() == Color.GREEN) {
+					utility -= values[i][j];
+				}
+			}
+		}
+		
+		return utility;
+	}
+	
+	@Override
+	public void setBoard(CandyLocation[][] grid) {
+		this.grid = grid;
+	}
+	
+	@Override
+	public void setValues(int[][] values) {
+		this.values = values;
+	}
 }

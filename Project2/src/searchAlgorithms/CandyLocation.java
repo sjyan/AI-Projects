@@ -10,30 +10,30 @@ public class CandyLocation {
 		EMPTY
 	}
 	
-	Color state;
+	Color color;
 	
 	public CandyLocation() {
-		this.state = Color.EMPTY;
+		this.color = Color.EMPTY;
 	}
 	
 	public CandyLocation(Color domain) {
-		this.state = domain;
+		this.color = domain;
 	}
 	
 	public void flip() {
-		if (state.equals(Color.GREEN)) {
-			this.state = Color.BLUE;
-		} else if (state.equals(Color.BLUE)) {
-			this.state = Color.GREEN;
+		if (color.equals(Color.GREEN)) {
+			this.color = Color.BLUE;
+		} else if (color.equals(Color.BLUE)) {
+			this.color = Color.GREEN;
 		}
 	}
 	
-	public void setState(Color domain) {
-		this.state = domain;
+	public void setColor(Color domain) {
+		this.color = domain;
 	}
 	
-	public Color getState() {
-		return this.state;
+	public Color getColor() {
+		return this.color;
 	}
 	
 }

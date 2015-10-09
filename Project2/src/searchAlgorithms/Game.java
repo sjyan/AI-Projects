@@ -15,16 +15,20 @@ public class Game {
 	protected Search playerB;
 	protected Coordinate nextMove;
 	
-	public Game(String fileName, Search A, Search B) throws IOException {
+	public Game(String fileName, Search searchA, Search searchB) throws IOException {
 		readFromFile(fileName);
-		this.playerA = A;
-		this.playerB = B;
+		this.playerA = searchA;
+		this.playerB = searchB;
 		
-		
+		playerA.setValues(values);
+		playerB.setValues(values);
 		
 		for (int i=0; i < 18; i++) {
+			playerA.setBoard(grid);
 			nextMove = playerA.search(Color.BLUE);
 			move(nextMove, Color.BLUE);
+			
+			playerB.setBoard(grid);
 			nextMove = playerB.search(Color.GREEN);
 			move(nextMove, Color.GREEN);
 		}
@@ -33,7 +37,7 @@ public class Game {
 	private void move(Coordinate position, Color color) {
 		int x = position.getX();
 		int y = position.getY();
-		grid[x][y].setState(color);
+		grid[x][y].setColor(color);
 		
 		if (checkAdjacent(x, y, color)) {
 			flipAdjacent(x, y, color);
@@ -42,13 +46,13 @@ public class Game {
 	
 	private boolean checkAdjacent(int x, int y, Color color) {
 		
-		if (grid[x-1][y].getState() == color) {
+		if (grid[x-1][y].getColor() == color) {
 			return true;
-		} else if (grid[x+1][y].getState() == color) {
+		} else if (grid[x+1][y].getColor() == color) {
 			return true;
-		} else if (grid[x][y-1].getState() == color) {
+		} else if (grid[x][y-1].getColor() == color) {
 			return true;
-		} else if (grid[x][y+1].getState() == color) {
+		} else if (grid[x][y+1].getColor() == color) {
 			return true;
 		}
 		
@@ -57,28 +61,28 @@ public class Game {
 	
 	private void flipAdjacent(int x, int y, Color color) {
 		
-		if (grid[x-1][y].getState() != color &&
-				grid[x-1][y].getState() != Color.EMPTY) {
+		if (grid[x-1][y].getColor() != color &&
+				grid[x-1][y].getColor() != Color.EMPTY) {
 			grid[x-1][y].flip();
-		} else if (grid[x+1][y].getState() != color &&
-				grid[x+1][y].getState() != Color.EMPTY) {
+		} else if (grid[x+1][y].getColor() != color &&
+				grid[x+1][y].getColor() != Color.EMPTY) {
 			grid[x+1][y].flip();
-		} else if (grid[x][y-1].getState() != color &&
-				grid[x][y-1].getState() != Color.EMPTY) {
+		} else if (grid[x][y-1].getColor() != color &&
+				grid[x][y-1].getColor() != Color.EMPTY) {
 			grid[x][y-1].flip();
-		} else if (grid[x][y+1].getState() != color &&
-				grid[x][y+1].getState() != Color.EMPTY) {
+		} else if (grid[x][y+1].getColor() != color &&
+				grid[x][y+1].getColor() != Color.EMPTY) {
 			grid[x][y+1].flip();
 		}
 	}
 	
-	public Color findWinner() {
+	public Color winnerWinnerChickenDinner() {
 		int green = 0;
 		int blue = 0;
 		
 		for (int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
-				if (grid[i][j].getState() == Color.BLUE) {
+				if (grid[i][j].getColor() == Color.BLUE) {
 					blue += values[i][j];
 				} else {
 					green += values[i][j];
