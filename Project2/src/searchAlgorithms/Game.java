@@ -9,11 +9,13 @@ import searchAlgorithms.CandyLocation.Color;
 
 public class Game {
 	
-	protected CandyLocation[][] grid = new CandyLocation[6][6];
-	protected int[][] values = new int[6][6];
+	protected CandyLocation[][] grid;
+	protected int[][] values;
 	protected Search playerA;
 	protected Search playerB;
 	protected Coordinate nextMove;
+	protected int rows = 0;
+	protected int columns;
 	
 	public Game(String fileName, Search searchA, Search searchB) throws IOException {
 		readFromFile(fileName);
@@ -77,22 +79,21 @@ public class Game {
 	}
 	
 	public Color winnerWinnerChickenDinner() {
-		int green = 0;
-		int blue = 0;
+		int score = 0;
 		
 		for (int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
 				if (grid[i][j].getColor() == Color.BLUE) {
-					blue += values[i][j];
+					score += values[i][j];
 				} else {
-					green += values[i][j];
+					score -= values[i][j];
 				}
 			}
 		}
 		
-		if (blue > green) {
+		if (score > 0) {
 			return Color.BLUE;
-		} else if (blue < green) {
+		} else if (score < 0) {
 			return Color.GREEN;
 		} else {
 			return Color.EMPTY;
@@ -105,10 +106,24 @@ public class Game {
 		
 		int value;
 		
-		for (int ver=0; ver<6; ver++) {
+		String firstLine = reader.readLine();
+		String[] splitArray = firstLine.split("\\s+");
+		columns = splitArray.length;
+		rows += 1;
+		
+		grid = new CandyLocation[splitArray.length][splitArray.length];
+		values = new int[splitArray.length][splitArray.length];
+		
+		for (int hor=0; hor<splitArray.length; hor++) {
+			value = Integer.parseInt(splitArray[hor]);
+			values[0][hor] = value;
+		}
+		
+		
+		for (int ver=1; ver<splitArray.length; ver++) {
 			String line = reader.readLine();
-			String[] splitArray = line.split("\\s+");
-			for (int hor=0; hor<6; hor++) {
+			splitArray = line.split("\\s+");
+			for (int hor=0; hor<splitArray.length; hor++) {
 				value = Integer.parseInt(splitArray[hor]);
 				values[ver][hor] = value;
 			}

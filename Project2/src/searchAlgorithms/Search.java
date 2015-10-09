@@ -9,14 +9,14 @@ import searchAlgorithms.CandyLocation.Color;
 
 public abstract class Search {
 	
-	protected CandyLocation[][] grid = new CandyLocation[6][6];
+	protected CandyLocation[][] grid;
 	protected int[][] values;
 	
 	public Search(int[][] values) throws IOException {
 		this.values = values;
 	}
 	
-	public abstract Coordinate search(Color color);
+	public abstract Coordinate search(Color color, int depth);
 	
 	public abstract void setBoard(CandyLocation[][] grid);
 	

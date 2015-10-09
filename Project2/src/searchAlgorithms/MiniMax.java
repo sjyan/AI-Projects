@@ -14,7 +14,7 @@ public class MiniMax extends Search{
 	}
 
 	@Override
-	public Coordinate search(Color color) {
+	public Coordinate search(Color color, int depth) {
 		Coordinate move;
 		int moveX = 0;
 		int moveY = 0;
@@ -31,12 +31,12 @@ public class MiniMax extends Search{
 		
 	}
 
-	private int checkUtil() {
+	private int checkUtil(Color color) {
 		int utility = 0;
 		
 		for (int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
-				if (grid[i][j].getColor() == Color.BLUE) {
+				if (grid[i][j].getColor() == color) {
 					utility += values[i][j];
 				} else if(grid[i][j].getColor() == Color.GREEN) {
 					utility -= values[i][j];

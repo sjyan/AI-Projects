@@ -3,6 +3,7 @@ package searchAlgorithms;
 public class Coordinate {
 	private int x;
 	private int y;
+	private int utility;
 	
 	public Coordinate(int x, int y) {
 		this.x = x;
@@ -17,4 +18,11 @@ public class Coordinate {
 		return y;
 	}
 	
+	public void setUtility(int utility) {
+		this.utility = utility;
+	}
+	
+	public int getUtility() {
+		return this.utility;
+	}
 }
