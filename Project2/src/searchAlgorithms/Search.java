@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import searchAlgorithms.CandyLocation.Color;
+
 public abstract class Search {
 	
 	protected CandyLocation[][] grid = new CandyLocation[6][6];
@@ -14,5 +16,5 @@ public abstract class Search {
 		
 	}
 	
-	public abstract Coordinate search();
+	public abstract Coordinate search(Color color);
 }

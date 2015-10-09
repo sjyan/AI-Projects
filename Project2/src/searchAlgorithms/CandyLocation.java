@@ -4,35 +4,35 @@ import searchAlgorithms.GridLocation.DomainState;
 
 public class CandyLocation {
 	
-	public enum DomainState {
+	public enum Color {
 		GREEN,
 		BLUE,
 		EMPTY
 	}
 	
-	DomainState state;
+	Color state;
 	
 	public CandyLocation() {
-		this.state = DomainState.EMPTY;
+		this.state = Color.EMPTY;
 	}
 	
-	public CandyLocation(DomainState domain) {
+	public CandyLocation(Color domain) {
 		this.state = domain;
 	}
 	
 	public void flip() {
-		if (state.equals(DomainState.GREEN)) {
-			this.state = DomainState.BLUE;
-		} else if (state.equals(DomainState.BLUE)) {
-			this.state = DomainState.GREEN;
+		if (state.equals(Color.GREEN)) {
+			this.state = Color.BLUE;
+		} else if (state.equals(Color.BLUE)) {
+			this.state = Color.GREEN;
 		}
 	}
 	
-	public void setState(DomainState domain) {
+	public void setState(Color domain) {
 		this.state = domain;
 	}
 	
-	public DomainState getState() {
+	public Color getState() {
 		return this.state;
 	}
 	

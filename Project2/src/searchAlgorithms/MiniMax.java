@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import searchAlgorithms.GridLocation.DomainState;
+import searchAlgorithms.CandyLocation.Color;
 
 public class MiniMax extends Search{
 
@@ -16,7 +16,8 @@ public class MiniMax extends Search{
 		super(board, values);
 	}
 
-	public Coordinate search() {
+	@Override
+	public Coordinate search(Color color) {
 		Coordinate move;
 		int moveX = 0;
 		int moveY = 0;
@@ -32,4 +33,5 @@ public class MiniMax extends Search{
 		return move;
 		
 	}
+
 }
