@@ -5,9 +5,14 @@ public class Coordinate {
 	private int y;
 	private int utility;
 	
-	public Coordinate(int x, int y) {
+	public Coordinate(int x, int y, int utility) {
 		this.x = x;
 		this.y = y;
+		this.utility = utility;
+	}
+	
+	public Coordinate(int utility) {
+		this.utility = utility;
 	}
 	
 	public int getX() {

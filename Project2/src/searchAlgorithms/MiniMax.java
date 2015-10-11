@@ -1,59 +1,42 @@
 package searchAlgorithms;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import searchAlgorithms.CandyLocation.Color;
 
 public class MiniMax extends Search{
 
-	public MiniMax(int[][] values) throws IOException {
-		super(values);
-	}
+	public MiniMax() {}
 
 	@Override
-	public Coordinate search(Color color, int depth) {
-		Coordinate move;
-		int moveX = 0;
-		int moveY = 0;
+	public Coordinate search(CandyLocation[][] board, int depth) {
+		bestMove = new Coordinate(-1);
 		
-		
-		for (int y=0; y<6; y++) {
-			for (int x=0; x<6; x++) {
-				
+		if (depth == 0) {
+			for (int i=0; i<rows; i++) {
+				for (int j=0; j<columns; j++) {
+					if (board[i][j].getColor() == Color.EMPTY) {
+						nextMove = new Coordinate(i,j,checkUtil(color));
+						if (bestMove.getUtility() < nextMove.getUtility()) {
+							bestMove = nextMove;
+						}
+					}
+				}
 			}
-		}
-		
-		move = new Coordinate(moveX,moveY);
-		return move;
-		
-	}
-
-	private int checkUtil(Color color) {
-		int utility = 0;
-		
-		for (int i=0; i<6; i++) {
-			for (int j=0; j<6; j++) {
-				if (grid[i][j].getColor() == color) {
-					utility += values[i][j];
-				} else if(grid[i][j].getColor() == Color.GREEN) {
-					utility -= values[i][j];
+		} else {
+			for (int i=0; i<rows; i++) {
+				for (int j=0; j<columns; j++) {
+					if (board[i][j].getColor() != Color.EMPTY) {
+						nextMove = new Coordinate(i,j,checkUtil(color));
+						search(board, depth-1);
+						if (bestMove.getUtility() < nextMove.getUtility()) {
+							bestMove = nextMove;
+						}
+					}
 				}
 			}
 		}
 		
-		return utility;
+		return bestMove;
+		
 	}
 	
-	@Override
-	public void setBoard(CandyLocation[][] grid) {
-		this.grid = grid;
-	}
-	
-	@Override
-	public void setValues(int[][] values) {
-		this.values = values;
-	}
 }
