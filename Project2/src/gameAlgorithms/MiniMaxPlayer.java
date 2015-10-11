@@ -74,8 +74,25 @@ public class MiniMaxPlayer extends Player {
 	private int evaluate() {
 		// fix this first
 		int score = 0;
-		// After determining heuristic...
+		// Weight cell values
+		// Weight candy parity
+		// Weight candy mobility
+		// Weight candy stability
 		return score;
+	}
+	
+	// helper function to determine a cell's neighbor cells
+	private Cell[] getNeighbors(Cell cell) {
+		Cell top =  (cell.getRow() > 0) 
+				? cells[cell.getRow() - 1][cell.getCol()] : null;
+		Cell left = (cell.getCol() > 0) 
+				? cells[cell.getRow()][cell.getCol() - 1] : null;
+		Cell right = (cell.getCol() < COLS - 1)
+				? cells[cell.getRow()][cell.getCol() + 1] : null;
+		Cell bottom = (cell.getRow() < ROWS - 1)
+				? cells[cell.getRow() + 1][cell.getCol()] : null;
+		
+		return new Cell[] {top, left, right, bottom};
 	}
 	
 	private boolean hasWon(Color color) {
