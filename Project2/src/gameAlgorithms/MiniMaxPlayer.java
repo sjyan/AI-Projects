@@ -72,12 +72,69 @@ public class MiniMaxPlayer extends Player {
 	
 	// heuristic function to determine next move
 	private int evaluate() {
-		// fix this first
+		// Measure candy parity, weighted by values
+		// Measure candy stability, weighted by values
 		int score = 0;
-		// Weight cell values
-		// Weight candy parity
-		// Weight candy mobility
-		// Weight candy stability
+		int myCandies = 0, oppCandies = 0;
+		int myStability = 0; int oppStability = 0;
+		for(int row = 0; row < ROWS; row++) {
+			for(int col = 0; col < COLS; col++) {
+				if(cells[row][col].getColor() == myColor) {
+					/*
+					stability + value if stable
+					stability - value if unstable
+					stability + 0 if semi stable
+					*/
+					Cell[] neighbors = getNeighbors(cells[row][col]);
+					boolean flankable = false;
+					checkNeighbors:
+					for(int i = 0; i < 4; i++) {
+						Cell[] neighborsNeighbors = getNeighbors(neighbors[i]);
+						for(int j = 0; j < 3; j++) {
+							if(i + j != 3) {
+								if(neighborsNeighbors[j].getColor()
+										== oppColor) {
+									break checkNeighbors;
+								}
+							}
+						}
+					}
+					
+					myStability += (flankable) ? -1 * cells[row][col].getValue()
+							: cells[row][col].getValue();
+					myCandies += cells[row][col].getValue();
+				} else if(cells[row][col].getColor() == oppColor) {
+					/*
+					stability - value if stable
+					stability + value if unstable
+					stability + 0 if semi stable
+					*/
+					Cell[] neighbors = getNeighbors(cells[row][col]);
+					boolean flankable = false;
+					checkNeighbors:
+					for(int i = 0; i < 4; i++) {
+						Cell[] neighborsNeighbors = getNeighbors(neighbors[i]);
+						for(int j = 0; j < 3; j++) {
+							if(i + j != 3) {
+								if(neighborsNeighbors[j].getColor()
+										== oppColor) {
+									break checkNeighbors;
+								}
+							}
+						}
+					}
+					myStability += (flankable) ? cells[row][col].getValue()
+							: -1 * cells[row][col].getValue();
+					oppCandies += cells[row][col].getValue();
+				} 
+			}
+		}
+	
+		double parity = (myCandies - oppCandies) / (myCandies + oppCandies);
+		double stability = (myStability - oppStability) / 
+				(myStability + oppStability);
+		
+		score += 100 * parity + 10 * stability;
 		return score;
 	}
 	
@@ -115,5 +172,4 @@ public class MiniMaxPlayer extends Player {
 		
 		return myTotalValues > oppTotalValues;
 	}
-	
 }
