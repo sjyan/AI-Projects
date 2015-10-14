@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 
+import searchAlgorithms.AlphaBeta;
 import searchAlgorithms.CandyLocation;
 import searchAlgorithms.CandyLocation.Color;
 import searchAlgorithms.Game;
@@ -88,24 +89,90 @@ public class Tester {
 		
 	}
 	
-	private void runGame(String gameFilePath) throws IOException {
-		Search player_1 = new MiniMax();
-		Search player_2 = new MiniMax();
-		int depth = 3;
-		Game game = new Game(gameFilePath, player_1, player_2, depth);
+	private void runGame(String gameBoard, boolean playerA, boolean playerB) throws IOException {
+		Search player_1;
+		Search player_2;
+		String title = "";
+		
+		if (playerA) {
+			player_1 = new MiniMax();
+			title += "Minimax vs. ";
+		} else {
+			player_1 = new AlphaBeta();
+			title += "AlphaBeta vs. ";
+		}
+		
+		if (playerB) {
+			player_2 = new MiniMax();
+			title += "Minimax";
+		} else {
+			player_2 = new AlphaBeta();
+			title += "AlphaBeta";
+		}
+	
+		int depth_1 = 3;
+		int depth_2 = 3;
+		
+		String gameFilePath = "../gameBoards/" + gameBoard + ".txt";
+		System.out.println(gameBoard);
+		System.out.println(title);
+		
+		Game game = new Game(gameFilePath, player_1, player_2, depth_1, depth_2);
 		printGame(game.getBoard(), game.getRows(), game.getColumns());
 		if (game.checkWinner() == Color.BLUE) {
-			System.out.println("A WINNER IS BLUE!");
+			System.out.println("Blue wins by: " + game.getScore());
+			System.out.println("Blue score: " + game.getBlue() + " Green score: " + game.getGreen());
+			System.out.println("Blue Average Move Time: " + game.getBlueTime() + "ms Green Average Move Time: " + game.getGreenTime() + "ms");
+			System.out.println("Blue Total Nodes: " + game.getBlueNodes() + " Green Total Nodes: " + game.getGreenNodes());
+			System.out.println("Blue Average Nodes: " + game.getBlueAvg() + " Green Average Nodes: " + game.getGreenAvg());
+			System.out.println("--------------------------");
 		} else if (game.checkWinner() == Color.GREEN) {
-			System.out.println("DA GREEN MACHINE!");
+			System.out.println("Green Wins by: " + game.getScore());
+			System.out.println("Blue score: " + game.getBlue() + " Green score: " + game.getGreen());
+			System.out.println("Blue Average Move Time: " + game.getBlueTime() + "ms Green Average Move Time: " + game.getGreenTime() + "ms");
+			System.out.println("Blue Total Nodes: " + game.getBlueNodes() + " Green Total Nodes: " + game.getGreenNodes());
+			System.out.println("Blue Average Nodes: " + game.getBlueAvg() + " Green Average Nodes: " + game.getGreenAvg());
+			System.out.println("--------------------------");
 		} else {
-			System.out.println("YOU BOTH SUCK!");
+			System.out.println("Tie Game");
+			System.out.println("Blue score: " + game.getBlue() + " Green score: " + game.getGreen());
+			System.out.println("Blue Average Move Time: " + game.getBlueTime() + "ms Green Average Move Time: " + game.getGreenTime() + "ms");
+			System.out.println("Blue Total Nodes: " + game.getBlueNodes() + " Green Total Nodes: " + game.getGreenNodes());
+			System.out.println("Blue Average Nodes: " + game.getBlueAvg() + " Green Average Nodes: " + game.getGreenAvg());
+			System.out.println("--------------------------");
 		}
+	}
+	
+	private void runAllGames() throws IOException {
+		runGame("AlmondJoy", true, true);
+		runGame("AlmondJoy", false, false);
+		runGame("AlmondJoy", false, true);
+		runGame("AlmondJoy", true, false);
+		
+		runGame("Ayds", true, true);
+		runGame("Ayds", false, false);
+		runGame("Ayds", false, true);
+		runGame("Ayds", true, false);
+		
+		runGame("Bit-O-Honey", true, true);
+		runGame("Bit-O-Honey", false, false);
+		runGame("Bit-O-Honey", false, true);
+		runGame("Bit-O-Honey", true, false);
+		
+		runGame("Mounds", true, true);
+		runGame("Mounds", false, false);
+		runGame("Mounds", false, true);
+		runGame("Mounds", true, false);
+		
+		runGame("ReesesPieces", true, true);
+		runGame("ReesesPieces", false, false);
+		runGame("ReesesPieces", false, true);
+		runGame("ReesesPieces", true, false);
 	}
 	
 	public static void main(String[] args) throws IOException, IllegalAccessException {
 		Tester tester = new Tester();
 //		tester.runAllLocalSearchTests();
-		tester.runGame("../gameBoards/AlmondJoy.txt");
+		tester.runAllGames();
 	}
 }

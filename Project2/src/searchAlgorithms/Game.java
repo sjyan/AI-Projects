@@ -18,9 +18,13 @@ public class Game {
 	protected int rows;
 	protected int columns;
 	protected ArrayList<String[]> rowList = new ArrayList<String[]>();
-	protected int depth;
+	protected int score;
+	protected long timeA;
+	protected long timeB;
+	protected int scoreBlue;
+	protected int scoreGreen;
 	
-	public Game(String fileName, Search searchA, Search searchB, int depth) throws IOException {
+	public Game(String fileName, Search searchA, Search searchB, int depth_1, int depth_2) throws IOException {
 		readFromFile(fileName);
 		
 		this.playerA = searchA;
@@ -35,25 +39,40 @@ public class Game {
 		playerA.setColor(Color.BLUE);
 		playerB.setColor(Color.GREEN);
 		
-		this.depth = depth;
-		
 		boolean turn = true;
+		int maxDepth = rows*columns -1;
 		
-		printBoard();
-		
+		if (depth_1 > maxDepth) {depth_1 = maxDepth;}
+		if (depth_2 > maxDepth) {depth_2 = maxDepth;}
+
 		for (int i=0; i < rows*columns; i++) {
 			if (turn) {
-				playerA.setBoard(board);
-				nextMove = playerA.search(board, depth);
+				long startTime = System.currentTimeMillis();
+				nextMove = playerA.search(board, depth_1, Color.BLUE, true, maxDepth);
+				System.out.println("Blue Moves: " + (char)(nextMove.getY()+65) + (nextMove.getX()+1));
+				
+				long endTime = System.currentTimeMillis();
+				
+				timeA += ((endTime - startTime));
+				
 				move(nextMove, Color.BLUE);
 				
 				turn = !turn;
+				maxDepth --;
+				
 			} else {
-				playerB.setBoard(board);
-				nextMove = playerB.search(board, depth);
+				long startTime = System.currentTimeMillis();
+				nextMove = playerB.search(board, depth_2, Color.GREEN, true, maxDepth);
+				System.out.println("Green Moves: " + (char)(nextMove.getY()+65) + (nextMove.getX()+1));
+				
+				long endTime = System.currentTimeMillis();
+
+				timeB += ((endTime - startTime));
+				
 				move(nextMove, Color.GREEN);
 				
 				turn = !turn;
+				maxDepth--;
 			}
 		}
 		
@@ -80,7 +99,7 @@ public class Game {
 		} else if (y-1 >= 0 && board[x][y-1].getColor() == color) {
 			return true;
 			
-		} else if (y+1 > board[x].length && board[x][y+1].getColor() == color) {
+		} else if (y+1 < board[x].length && board[x][y+1].getColor() == color) {
 			return true;
 		}
 		
@@ -119,19 +138,23 @@ public class Game {
 	public Color checkWinner() {
 		int score = 0;
 		
-		for (int i=0; i<6; i++) {
-		for (int j=0; j<6; j++) {
+		for (int i=0; i<rows; i++) {
+		for (int j=0; j<columns; j++) {
 			if (board[i][j].getColor() == Color.BLUE) {
 				score += values[i][j];
+				this.scoreBlue += values[i][j];
 			} else {
 				score -= values[i][j];
+				this.scoreGreen += values[i][j];
 			}
 		}
 		}
 		
 		if (score > 0) {
+			this.score = score;
 			return Color.BLUE;
 		} else if (score < 0) {
+			this.score = -score;
 			return Color.GREEN;
 		} else {
 			return Color.EMPTY;
@@ -185,23 +208,68 @@ public class Game {
 		return this.columns;
 	}
 	
+	public int getScore() {
+		return this.score;
+	}
+	
 	private void printBoard() {
 		String colorBoard = "";
 		
 		
-		for (int row = 0; row < board.length; row++) {
-			for (int column = 0; column < board[row].length; column++) {
-				if (board[row][column].getColor() == Color.BLUE) {
+		for (int i=0; i < rows; i++) {
+			for (int j=0; j < columns; j++) {
+				if (board[i][j].getColor() == Color.BLUE) {
 					colorBoard += "B ";
-				} else if (board[row][column].getColor() == Color.GREEN) {
+				} else if (board[i][j].getColor() == Color.GREEN) {
 					colorBoard += "G ";
-				} else if (board[row][column].getColor() == Color.EMPTY) {
+				} else if (board[i][j].getColor() == Color.EMPTY) {
 					colorBoard += "E ";
 				}
 			}
 			
+			
 			System.out.println(colorBoard);
 			colorBoard = "";
 		}
+	}
+	
+	public int getBlue() {
+		return this.scoreBlue;
+	}
+	
+	public int getGreen() {
+		return this.scoreGreen;
+	}
+	
+	public long getBlueTime() {
+		double moves = Math.ceil(rows*columns/2);
+		
+		return (long) (this.timeA/moves);
+	}
+	
+	public long getGreenTime() {
+		double moves = Math.floor(rows*columns/2);
+		
+		return (long) (this.timeA/moves);
+	}
+	
+	public int getBlueNodes() {
+		return playerA.getNodes();
+	}
+	
+	public int getGreenNodes() {
+		return playerB.getNodes();
+	}
+	
+	public double getBlueAvg() {
+		double moves = Math.ceil(rows*columns/2);
+		
+		return (playerA.getNodes()/moves);
+	}
+	
+	public double getGreenAvg() {
+		double moves = Math.floor(rows*columns/2);
+		
+		return (playerB.getNodes()/moves);
 	}
 }
