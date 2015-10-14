@@ -78,6 +78,7 @@ public class Game {
 		
 	}
 	
+	//Places move onto board based on color
 	private void move(Coordinate position, Color color) {
 		int x = position.getX();
 		int y = position.getY();
@@ -88,6 +89,7 @@ public class Game {
 		}
 	}
 	
+	//Checks if any of the same color are adjacent
 	private boolean checkAdjacent(int x, int y, Color color) {
 		
 		if (x-1 >= 0 && board[x-1][y].getColor() == color) {
@@ -106,6 +108,7 @@ public class Game {
 		return false;
 	}
 	
+	//Flips opposing colors to player color
 	private void flipAdjacent(int x, int y, Color color) {
 		
 		if 		  ( x-1 >= 0 &&
@@ -135,6 +138,7 @@ public class Game {
 		}
 	}
 	
+	//Checks winner and adds to each players score
 	public Color checkWinner() {
 		int score = 0;
 		
@@ -161,6 +165,7 @@ public class Game {
 		}
 	}
 	
+	//Converts text file to 2d arrays for colors and values
 	private void readFromFile(String fileName) throws IOException {
 		InputStream inputStream = LocalSearch.class.getResourceAsStream(fileName);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -196,22 +201,27 @@ public class Game {
 		
 	}
 	
+	//Returns current state of board
 	public CandyLocation[][] getBoard() {
 		return this.board;
 	}
 	
+	//Returns # of rows
 	public int getRows() {
 		return this.rows;
 	}
 	
+	//Returns # of columns
 	public int getColumns() {
 		return this.columns;
 	}
 	
+	//Returns score differential
 	public int getScore() {
 		return this.score;
 	}
 	
+	//Prints out current state of board. Used for testing
 	private void printBoard() {
 		String colorBoard = "";
 		
@@ -233,40 +243,48 @@ public class Game {
 		}
 	}
 	
+	//Returns blue's score
 	public int getBlue() {
 		return this.scoreBlue;
 	}
 	
+	//Returns green's score
 	public int getGreen() {
 		return this.scoreGreen;
 	}
 	
+	//Returns blue's average time per move
 	public long getBlueTime() {
 		double moves = Math.ceil(rows*columns/2);
 		
 		return (long) (this.timeA/moves);
 	}
 	
+	//Returns green's average time per move
 	public long getGreenTime() {
 		double moves = Math.floor(rows*columns/2);
 		
 		return (long) (this.timeA/moves);
 	}
 	
+	//Returns blue's total nodes opened
 	public int getBlueNodes() {
 		return playerA.getNodes();
 	}
 	
+	//Returns green's total nodes opened
 	public int getGreenNodes() {
 		return playerB.getNodes();
 	}
 	
+	//Returns blue's average nodes opened
 	public double getBlueAvg() {
 		double moves = Math.ceil(rows*columns/2);
 		
 		return (playerA.getNodes()/moves);
 	}
 	
+	//Returns green's average nodes opened
 	public double getGreenAvg() {
 		double moves = Math.floor(rows*columns/2);
 		

@@ -172,7 +172,7 @@ public class Tester {
 	
 	public static void main(String[] args) throws IOException, IllegalAccessException {
 		Tester tester = new Tester();
-//		tester.runAllLocalSearchTests();
+		tester.runAllLocalSearchTests();
 		tester.runAllGames();
 	}
 }
